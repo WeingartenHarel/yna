@@ -32,7 +32,10 @@ export function PoolList({ pools }) {
         event.preventDefault();
         let poolIndex = pools.findIndex(pool => pool._id === formId)
         let pool = {...pools[poolIndex]}
-        pool.options[0][selectedColor] = pool.options[0][selectedColor]+1
+        let optionIndex = pool.options.findIndex(option => option.option === selectedColor)
+        pool.options[optionIndex].value++;
+        // console.log('pool ',pool)
+
         let updatedPool = await poolService.update(pool);
         console.log('updatedPool',updatedPool)
 
@@ -50,22 +53,12 @@ export function PoolList({ pools }) {
                     <form value={pool} onSubmit={handleSubmit}>
                         <input name="pool" type="text" readOnly hidden value={pool} />
                         <span>Name: {pool.title}</span>
-                        <div>
-                            <input data-id={pool._id} name="red"  value={checkedColor.red} checked={checkedColor.red} onChange={handleSubmitSelecteColor} type="radio" />
-                            <span><span class="Red">Red: </span>{pool.options[0].red}</span>
-                        </div>
-                        <div>
-                            <input data-id={pool._id} name="green" checked={checkedColor.green} value={checkedColor.green} onChange={handleSubmitSelecteColor} type="radio" />
-                            <span><span class="Green">Green:</span> {pool.options[0].green}</span>
-                        </div>
-                        <div>
-                            <input data-id={pool._id} name="blue" checked={checkedColor.blue} value={checkedColor.blue} onChange={handleSubmitSelecteColor} type="radio" />
-                            <span><span class="Blue">Blue:</span> {pool.options[0].blue}</span>
-                        </div>
-                        <div>
-                            <input data-id={pool._id} name="yellow" checked={checkedColor.yellow} value={checkedColor.yellow} onChange={handleSubmitSelecteColor} type="radio" />
-                            <span><span class="Yellow">Yellow: </span>{pool.options[0].yellow}</span>
-                        </div>
+                        {pool.options.map( option =>{
+                           return( <div>
+                            <input data-id={pool._id} name={option.option}  value={option.option} checked={checkedColor[option.option]} onChange={handleSubmitSelecteColor} type="radio" />
+                            <span><span class={option.option}>{option.option} </span>{option.value}</span>
+                            </div>)
+                        })}
                         <button type="submit" value={pool}>Submit Vote</button>
                     </form>
                 </div>)
